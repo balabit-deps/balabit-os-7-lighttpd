@@ -1,0 +1,25 @@
+description: fix upstream spelling errors
+author: Michael Gilbert <mgilbert@debian.org>
+
+--- a/src/mod_scgi.c
++++ b/src/mod_scgi.c
+@@ -1587,7 +1587,7 @@ static int scgi_establish_connection(ser
+ 				/* this is Linux only */
+ 
+ 				log_error_write(srv, __FILE__, __LINE__, "s",
+-						"If this happend on Linux: You have been run out of local ports. "
++						"If this happened on Linux: You have run out of local ports. "
+ 						"Check the manual, section Performance how to handle this.");
+ 			}
+ 
+--- a/src/mod_ssi.c
++++ b/src/mod_ssi.c
+@@ -805,7 +805,7 @@ static int process_ssi_stmt(server *srv,
+ 
+ 			execl("/bin/sh", "sh", "-c", cmd, (char *)NULL);
+ 
+-			log_error_write(srv, __FILE__, __LINE__, "sss", "spawing exec failed:", strerror(errno), cmd);
++			log_error_write(srv, __FILE__, __LINE__, "sss", "spawning exec failed:", strerror(errno), cmd);
+ 
+ 			/* */
+ 			SEGFAULT();
