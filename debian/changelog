@@ -1,3 +1,10 @@
+lighttpd (1.4.45-1ubuntu3.18.04) bionic; urgency=medium
+
+  * Cherrypick and rebase upstream patch to disable client renegotiation
+    with TLSv1.3 connections. LP: #1832295
+
+ -- Dimitri John Ledkov <xnox@ubuntu.com>  Mon, 24 Jun 2019 23:58:56 +0100
+
 lighttpd (1.4.45-1ubuntu3) bionic; urgency=high
 
   * No change rebuild against openssl1.1.

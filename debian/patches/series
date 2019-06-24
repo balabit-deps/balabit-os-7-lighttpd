@@ -1,3 +1,4 @@
 build-dev-package.patch
 add-lighttpd.pc-configure.patch
 spelling.patch
+7a7f4f987aa8443aa3898f484539f707e213bcba.patch

@@ -1,0 +1,54 @@
+From 7a7f4f987aa8443aa3898f484539f707e213bcba Mon Sep 17 00:00:00 2001
+From: Glenn Strauss <gstrauss@gluelogic.com>
+Date: Sat, 6 Oct 2018 05:05:45 -0400
+Subject: [PATCH] [mod_openssl] no renegotiation in TLS 1.3 (fixes #2912)
+
+x-ref:
+  "OpenSSL 1.1.1: renegotiation initiated by client, killing connection"
+  https://redmine.lighttpd.net/issues/2912
+Signed-off-by: Dimitri John Ledkov <xnox@ubuntu.com>
+Bug-Ubuntu: https://bugs.launchpad.net/ubuntu/+source/lighttpd/+bug/1832295
+---
+ src/mod_openssl.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+Index: lighttpd-1.4.45/src/base.h
+===================================================================
+--- lighttpd-1.4.45.orig/src/base.h
++++ lighttpd-1.4.45/src/base.h
+@@ -473,7 +473,7 @@ typedef struct {
+ # ifndef OPENSSL_NO_TLSEXT
+ 	buffer *tlsext_server_name;
+ # endif
+-	unsigned int renegotiations; /* count of SSL_CB_HANDSHAKE_START */
++	int renegotiations; /* count of SSL_CB_HANDSHAKE_START */
+ #endif
+ 	/* etag handling */
+ 	etag_flags_t etag_flags;
+Index: lighttpd-1.4.45/src/network.c
+===================================================================
+--- lighttpd-1.4.45.orig/src/network.c
++++ lighttpd-1.4.45/src/network.c
+@@ -45,8 +45,21 @@ static void ssl_info_callback(const SSL
+ 
+ 	if (0 != (where & SSL_CB_HANDSHAKE_START)) {
+ 		connection *con = SSL_get_app_data(ssl);
+-		++con->renegotiations;
++		if (con->renegotiations >=0) ++con->renegotiations;
+ 	}
++	#ifdef TLS1_3_VERSION
++	/* https://github.com/openssl/openssl/issues/5721
++	* "TLSv1.3 unexpected InfoCallback after handshake completed" */
++	if (0 != (where & SSL_CB_HANDSHAKE_DONE)) {
++		/* SSL_version() is valid after initial handshake completed */
++		if (SSL_version(ssl) >= TLS1_3_VERSION) {
++			/* https://wiki.openssl.org/index.php/TLS1.3
++			* "Renegotiation is not possible in a TLSv1.3 connection" */
++			connection *con = SSL_get_app_data(ssl);
++			con->renegotiations = -1;
++		}
++	}
++	#endif
+ }
+ #endif
+ 
