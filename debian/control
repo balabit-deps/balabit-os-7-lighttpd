@@ -19,10 +19,10 @@ Build-Depends:
  libbz2-dev,
  libattr1-dev,
  libpcre3-dev,
- libgamin-dev,
  default-libmysqlclient-dev,
  libldap2-dev,
  libfcgi-dev,
+ libgamin-dev,
  libgdbm-dev,
  libgeoip-dev,
  liblua5.1-0-dev,
@@ -48,6 +48,7 @@ Depends:
  ${shlibs:Depends},
  mime-support,
  lsb-base (>= 3.0-6),
+ libgamin0,
 Recommends:
  spawn-fcgi,
 Suggests:
